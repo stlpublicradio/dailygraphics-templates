@@ -1,12 +1,14 @@
 var pym = require("./lib/pym");
-var ANALYTICS = require("./lib/analytics");
 require("./lib/webfonts");
-var { isMobile } = require("./lib/breakpoints");
 
 // build our custom D3 object
-var d3 = Object.assign({}, require("d3-scale"), require("d3-selection"));
+var d3 = {
+  ...require("d3-scale/dist/d3-scale.min"),
+  ...require("d3-selection/dist/d3-selection.min")
+};
 
 var { COLORS, classify } = require("./lib/helpers");
+var { isMobile } = require("./lib/breakpoints");
 var $ = require("./lib/qsa");
 
 // Global vars
@@ -22,14 +24,6 @@ var onWindowLoaded = function() {
   pym.then(function(child) {
     pymChild = child;
     pymChild.sendHeight();
-
-    pymChild.onMessage("on-screen", function(bucket) {
-      ANALYTICS.trackEvent("on-screen", bucket);
-    });
-    pymChild.onMessage("scroll-depth", function(data) {
-      data = JSON.parse(data);
-      ANALYTICS.trackEvent("scroll-depth", data.percent, data.seconds);
-    });
   });
 };
 
@@ -44,15 +38,13 @@ var formatData = function() {
       "American Samoa"
     ];
 
-    DATA = DATA.filter(function(d) {
-      return territories.indexOf(d.state_name) == -1;
-    });
+    DATA = DATA.filter(d => territories.indexOf(d.state_name) == -1);
   }
 };
 
 // Render the graphic(s). Called by pym with the container width.
 var render = function() {
-  isNumeric = LABELS.isNumeric;
+  isNumeric = LABELS.is_numeric;
 
   // Render the map!
   var container = "#state-grid-map";
@@ -90,6 +82,12 @@ var renderStateGridMap = function(config) {
   if (LABELS.legend_labels && LABELS.legend_labels !== "") {
     // If custom legend labels are specified
     categories = LABELS.legend_labels.split("|").map(l => l.trim());
+
+    if (config.isNumeric) {
+      categories.forEach(function(d,i) {
+        categories[i] = Number(categories[i]);
+      });
+    }
   } else {
     // Default: Return sorted array of categories
     config.data.forEach(function(state) {
@@ -110,7 +108,7 @@ var renderStateGridMap = function(config) {
     legendWrapper.classed("numeric-scale", true);
 
     var colorScale = d3
-      .scaleOrdinal()
+      .scaleThreshold()
       .domain(categories)
       .range([
         COLORS.teal6,
@@ -166,13 +164,13 @@ var renderStateGridMap = function(config) {
 
   // Set state colors
   config.data.forEach(function(state) {
-    if (state[valueColumn] !== null) {
+    if (state[valueColumn] !== null && state[valueColumn] !== undefined) {
       var stateClass = "state-" + classify(state.state_name);
       var categoryClass = "category-" + classify(state[valueColumn] + "");
 
       chartElement
         .select("." + stateClass)
-        .attr("class", stateClass + " state-active " + categoryClass)
+        .attr("class", `${ stateClass } ${ categoryClass } state-active`)
         .attr("fill", colorScale(state[valueColumn]));
     }
   });
@@ -189,11 +187,11 @@ var renderStateGridMap = function(config) {
       var state = STATES.filter(s => s.name == d.state_name).pop();
       return isMobile.matches ? state.usps : state.ap;
     })
-    .attr("class", function(d) {
-      return d[valueColumn] !== null
-        ? "category-" + classify(d[valueColumn] + "") + " label label-active"
-        : "label";
-    })
+    .attr("class", d =>
+      (d[valueColumn] !== null && d[valueColumn] !== undefined)
+        ? `category-${classify(d[valueColumn] + "")} label label-active`
+        : "label"
+    )
     .attr("x", function(d) {
       var className = `.state-${classify(d.state_name)}`;
       var tileBox = $.one(className).getBBox();

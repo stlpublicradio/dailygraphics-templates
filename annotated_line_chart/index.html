@@ -1,7 +1,14 @@
-<% if (COPY.labels.headline) { %><h1><%= COPY.labels.headline %></h1><% } %>
-<% if (COPY.labels.subhed) { %><h2><%= COPY.labels.subhed %></h2><% } %>
+<%= await t.include("lib/_head.html") %>
 
-<div id="line-chart" class="graphic" role="img"
+<% if (COPY.labels.headline) { %>
+<h1><%= t.smarty(COPY.labels.headline) %></h1>
+<% } %>
+
+<% if (COPY.labels.subhed) { %>
+<h2><%= t.smarty(COPY.labels.subhed) %></h2>
+<% } %>
+
+<div id="annotated-line-chart" class="graphic" role="img"
 <% if (COPY.labels.screenreader) { %>
   aria-label="<%- COPY.labels.screenreader %>"
 <% } %>
@@ -24,3 +31,7 @@
 <script type="text/javascript">
   var DATA = <%= JSON.stringify(COPY.data) %>;
 </script>
+
+<script src="./graphic.js"></script>
+
+<%= await t.include("lib/_foot.html") %>

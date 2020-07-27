@@ -1,5 +1,10 @@
 @import url(http://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic|Titillium+Web:700,400,300);
 
+// Media queries
+@screen-medium-above: ~"screen and (min-width: 651px)";
+@screen-mobile-above: ~"screen and (min-width: 501px)";
+@screen-mobile: ~"screen and (max-width: 500px)";
+
 // Colors
 
 @red1       : #7a1323;
@@ -97,6 +102,18 @@
   }
 }
 
+// NPR multimedia-template
+.mmedia-constrained() {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 650px;
+}
+
+.mmedia-constrained-centered() {
+    .mmedia-constrained();
+    text-align: center;
+}
+
 // Base styles
 * {
   box-sizing: border-box;
@@ -113,6 +130,10 @@ body {
   color: #555;
   //remove 300ms click delay in Safari, AKA still the worst
   touch-action: manipulation;
+}
+
+img, svg {
+  max-width: 100%;
 }
 
 h1 {
@@ -325,4 +346,17 @@ body.childlink {
 
 img:not([alt]) {
   outline: 3px solid red;
+
+  [role="img"] & {
+    outline: none;
+  }
+}
+
+.sr-only {
+  opacity: 0;
+  position: absolute;
+  left: -1000px;
+  clip: inset(0, 0, 0, 0);
+  width: 1px;
+  height: 1px;
 }

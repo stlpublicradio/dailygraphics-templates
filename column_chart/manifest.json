@@ -1,11 +1,13 @@
 {
   "templateSheet": "1-wN8QJAaAE5zzIMcbfPPchPWAGFj6BnpZrU72Fp6cm4",
   "files": [
-    "index.html",
+    "*.html",
+    "!_*.html",
     "graphic.js",
     "graphic.less",
     "*.png",
     "*.jpg",
+    "*.gif",
     "*.json",
     "!manifest.json",
     "*.geojson",

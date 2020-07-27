@@ -1,12 +1,14 @@
+<%= await t.include("lib/_head.html") %>
+
 <% if (COPY.labels.headline) { %>
-<h1><%= COPY.labels.headline %></h1>
+<h1><%= t.smarty(COPY.labels.headline) %></h1>
 <% } %>
 
 <% if (COPY.labels.subhed) { %>
-<h2><%= COPY.labels.subhed %></h2>
+<h2><%= t.smarty(COPY.labels.subhed) %></h2>
 <% } %>
 
-<div id="chart" class="graphic" role="img" aria-label="<%- COPY.labels.screenreader %>">
+<div id="stacked-grouped-column-chart" class="graphic" role="img" aria-label="<%- COPY.labels.screenreader %>">
   <img src="fallback.png" alt="" class="fallback">
 </div>
 
@@ -26,3 +28,13 @@
   <p>Credit: <%= COPY.labels.credit %></p>
   <% } %>
 </div>
+
+<% if ("data" in COPY) { %>
+<script type="text/javascript">
+window.DATA = <%= JSON.stringify(COPY.data) %>;
+</script>
+<% } %>
+
+<script src="./graphic.js"></script>
+
+<%= await t.include("lib/_foot.html") %>

@@ -1,28 +1,30 @@
+<%= await t.include("lib/_head.html") %>
+
 <% if (COPY.labels.headline) { %>
-<h1><%= COPY.labels.headline %></h1>
+<h1><%= t.smarty(COPY.labels.headline) %></h1>
 <% } %>
 
 <% if (COPY.labels.subhed) { %>
-<h2><%= COPY.labels.subhed %></h2>
+<h2><%= t.smarty(COPY.labels.subhed) %></h2>
 <% } %>
 
-<div class="graphic">
-  <table id="state-table">
-    <thead>
-      <tr>
-        <th>
+<div class="graphic" id="table-graphic">
+  <table id="state-table" role="table">
+    <thead role="rowgroup">
+      <tr role="row">
+        <th role="columnheader">
           <div class="sorter"><div class="icon"></div></div>
           <div class="header"><%= COPY.labels.hdr_state %></div>
         </th>
-        <th>
+        <th role="columnheader">
           <div class="sorter"><div class="icon"></div></div>
           <div class="header"><%= COPY.labels.hdr_usps %></div>
         </th>
-        <th>
+        <th role="columnheader">
           <div class="sorter"><div class="icon"></div></div>
           <div class="header"><%= COPY.labels.hdr_ap %></div>
         </th>
-        <th class="amt">
+        <th class="amt sort-header" role="columnheader">
           <div class="sorter"><div class="icon"></div></div>
           <div class="header"><%= COPY.labels.hdr_value %></div>
         </th>
@@ -30,13 +32,13 @@
     </thead>
 
     <% COPY.data.forEach(function(row) { %>
-    <tr class="state-<%= t.classify(row.usps) %>">
-      <td data-title="<%= COPY.labels.hdr_state %>"><%= row.name %></td>
-      <td data-title="<%= COPY.labels.hdr_usps %>"><%= row.usps %></td>
-      <td data-title="<%= COPY.labels.hdr_ap %>"><%= t.ap_state(row.usps) %></td>
-      <td data-title="<%= COPY.labels.hdr_value %>" class="amt"><%= t.comma(row.value) %></td>
+    <tr class="state-<%= t.classify(row.usps) %>" role="row">
+      <td role="cell" data-title="<%= COPY.labels.hdr_state %>"><%= row.name %></td>
+      <td role="cell" data-title="<%= COPY.labels.hdr_usps %>"><%= row.usps %></td>
+      <td role="cell" data-title="<%= COPY.labels.hdr_ap %>"><%= t.ap_state(row.usps) %></td>
+      <td role="cell" data-title="<%= COPY.labels.hdr_value %>" class="amt"><%= t.comma(row.value) %></td>
     </tr>
-    <% }) %>
+  <% }) %>
 
   </table>
 </div>
@@ -52,8 +54,12 @@
   <% if (COPY.labels.source) { %>
   <p>Source: <%= COPY.labels.source %></p>
   <% } %>
-  
+
   <% if (COPY.labels.credit) { %>
   <p>Credit: <%= COPY.labels.credit %></p>
   <% } %>
 </div>
+
+<script src="./graphic.js"></script>
+
+<%= await t.include("lib/_foot.html") %>
